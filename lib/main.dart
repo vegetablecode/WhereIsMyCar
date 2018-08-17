@@ -1,36 +1,58 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import './pages/Home.dart' as homePage;
+import './pages/About.dart' as aboutPage;
 
 void main() => runApp(new MyApp());
- 
+
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return new MaterialApp(
-      home: new MyHomePage(title: 'Text Input Example'),
+    return MaterialApp(
+      title: 'Cupertino Demo',
+      theme: ThemeData.light(),
+      home: MyHomePage(),
     );
   }
 }
- 
+
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-  final String title;
- 
   @override
-  _MyHomePageState createState() => new _MyHomePageState();
+  _MyHomePageState createState() => _MyHomePageState();
 }
- 
+
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    return new CupertinoPageScaffold(
-      child: CustomScrollView(
-        slivers: <Widget>[
-          new CupertinoSliverNavigationBar(
-            largeTitle: new Text("Where is my car?"),
-          )
-        ]
-      ),
+    return new CupertinoTabScaffold(
+      tabBar: new CupertinoTabBar(
+          backgroundColor: CupertinoColors.lightBackgroundGray,
+          items: [
+            new BottomNavigationBarItem(
+              icon: Icon(CupertinoIcons.home),
+              title: Text("Home"),
+            ),
+            new BottomNavigationBarItem(
+              icon: Icon(CupertinoIcons.info),
+              title: Text("About me"),
+            ),
+          ]),
+      tabBuilder: (context, index) {
+        return CupertinoTabView(
+          builder: (context) {
+            switch (index) {
+              case 0:
+                return homePage.Home();
+                break;
+              case 1:
+                return aboutPage.About();
+                break;
+              default:
+                return Container();
+            }
+          },
+        );
+      },
     );
   }
 }
