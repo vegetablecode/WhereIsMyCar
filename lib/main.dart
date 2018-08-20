@@ -26,15 +26,15 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return new CupertinoTabScaffold(
       tabBar: new CupertinoTabBar(
-          backgroundColor: CupertinoColors.lightBackgroundGray,
+          backgroundColor: new Color(0xFF454c54),
           items: [
             new BottomNavigationBarItem(
-              icon: Icon(CupertinoIcons.home),
-              title: Text("Home"),
+              icon: Icon(CupertinoIcons.home, color: Colors.white,),
+              title: Text("Home", style: new TextStyle(color: Colors.white)),
             ),
             new BottomNavigationBarItem(
-              icon: Icon(CupertinoIcons.info),
-              title: Text("About me"),
+              icon: Icon(CupertinoIcons.info, color: Colors.white,),
+              title: Text("O aplikacji", style: new TextStyle(color: Colors.white)),
             ),
           ]),
       tabBuilder: (context, index) {
