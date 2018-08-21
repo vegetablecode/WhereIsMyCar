@@ -98,22 +98,6 @@ class HomeState extends State<Home> {
   void parkTheCar() {
     print("park");
     showLocation();
-    print("000000000000000000000000000000000");
-    print(userLocation);
-    Marker carMarker = new Marker(
-      "2",
-      "Something fragile!",
-      userLocation.latitude,
-      userLocation.longitude,
-      color: Colors.blue,
-      draggable: true, //Allows the user to move the marker.
-      markerIcon: new MarkerIcon(
-        "images/flower_vase.png",
-        width: 112.0,
-        height: 75.0,
-      ),
-    );
-    _markers.add(carMarker);
   }
 
   void findTheCar() {
@@ -226,6 +210,8 @@ class HomeState extends State<Home> {
       print("Annotation ${marker.id} moved to ${location.latitude} , ${location
           .longitude}");
     });
+
+    // exit
     compositeSubscription.add(sub);
     sub = mapView.onToolbarAction.listen((id) {
       print("Toolbar button id = $id");
@@ -238,6 +224,27 @@ class HomeState extends State<Home> {
       print("Info Window Tapped for ${marker.title}");
     });
     compositeSubscription.add(sub);
+
+    // add a new marker
+    Marker carMarker = new Marker(
+      "2",
+      "Twój samochód!",
+      userLocation.latitude,
+      userLocation.longitude,
+      color: Colors.blue,
+      draggable: false,
+      markerIcon: new MarkerIcon(
+        "assets/parking.png",
+        width: 75.0,
+        height: 75.0,
+      ),
+    );
+    _markers.clear();
+    _markers.add(carMarker);
+
+    // change camera position
+    //sub = mapView.onCameraChanged.listen((cameraPosition) =>
+     //   this.setState(() => this.cameraPosition = userLocation));
   }
 
   void _handleDismiss() async {
