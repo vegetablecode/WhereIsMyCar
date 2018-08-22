@@ -1,9 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:map_view/figure_joint_type.dart';
 import 'package:map_view/map_view.dart';
-import 'package:map_view/polygon.dart';
-import 'package:map_view/polyline.dart';
 import './pages/Home.dart' as homePage;
 import './pages/About.dart' as aboutPage;
 

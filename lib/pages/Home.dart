@@ -18,7 +18,7 @@ class HomeState extends State<Home> {
   Uri staticMapUri;
   var compositeSubscription = new CompositeSubscription();
   var staticMapProvider = new StaticMapProvider(API_KEY);
-  var userLocation;
+  var currentLocation;
 
   List<Marker> _markers = <Marker>[
     new Marker(
@@ -52,7 +52,7 @@ class HomeState extends State<Home> {
 
     // initial state
     @override
-    initStatae() {
+    initState() {
       super.initState();
       cameraPosition = new CameraPosition(Locations.portland, 2.0);
       staticMapUri = staticMapProvider.getStaticUri(Locations.portland, 12,
@@ -96,8 +96,9 @@ class HomeState extends State<Home> {
   }
 
   void parkTheCar() {
-    print("park");
-    showLocation();
+    print("park"); 
+    getLocation();
+    showMap();
   }
 
   void findTheCar() {
@@ -114,7 +115,7 @@ class HomeState extends State<Home> {
             showMyLocationButton: true,
             showCompassButton: true,
             initialCameraPosition: new CameraPosition(
-                new Location(45.526607443935724, -122.66731660813093), 15.0),
+                new Location(_markers[0].latitude, _markers[0].longitude), 15.0),
             hideToolbar: false,
             title: "Recently Visited"),
         toolbarActions: [new ToolbarAction("Close", 1)]);
@@ -163,7 +164,21 @@ class HomeState extends State<Home> {
     compositeSubscription.add(sub);
   }
 
-    void showLocation() {
+  void _handleDismiss() async {
+    double zoomLevel = await mapView.zoomLevel;
+    Location centerLocation = await mapView.centerLocation;
+    List<Marker> visibleAnnotations = await mapView.visibleAnnotations;
+    print("Zoom Level: $zoomLevel");
+    print("Center: $centerLocation");
+    print("Visible Annotation Count: ${visibleAnnotations.length}");
+    var uri = await staticMapProvider.getImageUriFromMap(mapView,
+        width: 900, height: 400);
+    setState(() => staticMapUri = uri);
+    mapView.dismiss();
+    compositeSubscription.cancel();
+  }
+
+  void getLocation() {
     mapView.show(
         new MapOptions(
             mapViewType: MapViewType.normal,
@@ -181,10 +196,7 @@ class HomeState extends State<Home> {
     compositeSubscription.add(sub);
     sub = mapView.onLocationUpdated.listen((location) {
       print("Location updated $location");
-      userLocation = location;
-    });
-    sub = mapView.onMapReady.listen((_) {
-      mapView.setMarkers(_markers);
+      currentLocation = location;
     });
     compositeSubscription.add(sub);
     sub = mapView.onTouchAnnotation
@@ -210,8 +222,6 @@ class HomeState extends State<Home> {
       print("Annotation ${marker.id} moved to ${location.latitude} , ${location
           .longitude}");
     });
-
-    // exit
     compositeSubscription.add(sub);
     sub = mapView.onToolbarAction.listen((id) {
       print("Toolbar button id = $id");
@@ -225,12 +235,14 @@ class HomeState extends State<Home> {
     });
     compositeSubscription.add(sub);
 
-    // add a new marker
-    Marker carMarker = new Marker(
+    // add new point
+    sub = mapView.onLocationUpdated.listen((location) {
+      // create a new marker
+      Marker carMarker = new Marker(
       "2",
       "Twój samochód!",
-      userLocation.latitude,
-      userLocation.longitude,
+      currentLocation.latitude,
+      currentLocation.longitude,
       color: Colors.blue,
       draggable: false,
       markerIcon: new MarkerIcon(
@@ -238,29 +250,13 @@ class HomeState extends State<Home> {
         width: 75.0,
         height: 75.0,
       ),
-    );
-    _markers.clear();
-    _markers.add(carMarker);
-
-    // change camera position
-    //sub = mapView.onCameraChanged.listen((cameraPosition) =>
-     //   this.setState(() => this.cameraPosition = userLocation));
+      );
+      _markers.clear();
+      _markers.add(carMarker);
+      print("a new point has been created!");
+    });
+    _handleDismiss();
   }
-
-  void _handleDismiss() async {
-    double zoomLevel = await mapView.zoomLevel;
-    Location centerLocation = await mapView.centerLocation;
-    List<Marker> visibleAnnotations = await mapView.visibleAnnotations;
-    print("Zoom Level: $zoomLevel");
-    print("Center: $centerLocation");
-    print("Visible Annotation Count: ${visibleAnnotations.length}");
-    var uri = await staticMapProvider.getImageUriFromMap(mapView,
-        width: 900, height: 400);
-    setState(() => staticMapUri = uri);
-    mapView.dismiss();
-    compositeSubscription.cancel();
-  }
-
 }
 
 class CompositeSubscription {
