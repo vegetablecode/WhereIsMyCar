@@ -76,7 +76,7 @@ class HomeState extends State<Home> {
               child: new Center(
                 child: new Column(children: <Widget>[
                   new GestureDetector(
-                    onTap: parkTheCar,
+                    onTap: parkTheCarDialog,
                     child: new Card(
                         child: new Container(
                       child: parkCarImg,
@@ -98,7 +98,8 @@ class HomeState extends State<Home> {
   void parkTheCar() {
     print("park"); 
     getLocation();
-    showMap();
+    getLocation();
+    carParkedDialog();
   }
 
   void findTheCar() {
@@ -117,7 +118,7 @@ class HomeState extends State<Home> {
             initialCameraPosition: new CameraPosition(
                 new Location(_markers[0].latitude, _markers[0].longitude), 15.0),
             hideToolbar: false,
-            title: "Recently Visited"),
+            title: "Znajdź samochód"),
         toolbarActions: [new ToolbarAction("Close", 1)]);
     StreamSubscription sub = mapView.onMapReady.listen((_) {
       mapView.setMarkers(_markers);
@@ -256,6 +257,67 @@ class HomeState extends State<Home> {
       print("a new point has been created!");
     });
     _handleDismiss();
+  }
+
+  Future<Null> parkTheCarDialog() async {
+    return showDialog<Null>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return new AlertDialog(
+          title: new Text('Parkowanie auta'),
+          content: new SingleChildScrollView(
+            child: new ListBody(
+              children: <Widget>[
+                new Text('Czy jesteś pewien, że chcesz zaparkować auto? Zapisane miejsce parkingowe zostanie usunięte.'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            new FlatButton(
+              child: new Text('Ok'),
+              onPressed: () {
+                parkTheCar();
+                Navigator.of(context).pop();
+              },
+            ),
+            new FlatButton(
+              child: new Text('Anuluj'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<Null> carParkedDialog() async {
+    return showDialog<Null>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return new AlertDialog(
+          title: new Text('Parkowanie auta'),
+          content: new SingleChildScrollView(
+            child: new ListBody(
+              children: <Widget>[
+                new Text('Samochód zaparkowany pomyślnie'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            new FlatButton(
+              child: new Text('Ok'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }
 

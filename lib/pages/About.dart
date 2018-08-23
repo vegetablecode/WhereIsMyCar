@@ -12,39 +12,29 @@ class AboutState extends State<About> {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
+      backgroundColor: new Color(0xFFebe7de),
       navigationBar: CupertinoNavigationBar(
-        middle: Text("About Page"),
+        middle: Text(
+          "O aplikacji",
+          style: new TextStyle(color: Colors.white),
+        ),
+        backgroundColor: new Color(0xFF454c54),
       ),
       child: Center(
+          child: new Container(
+        padding: new EdgeInsets.all(5.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
-            CupertinoButton(
-              child: Text('Button'),
-              onPressed: () {},
-            ),
-            CupertinoSlider(
-              value: _value,
-              min: 0.0,
-              max: 100.0,
-              onChanged: (double value) {
-                setState(() => _value = value);
-              },
-              activeColor: CupertinoColors.activeGreen,
-            ),
-            CupertinoSwitch(
-              value: _switchValue,
-              onChanged: (bool value) {
-                setState(() => _switchValue = value);
-              },
-            ),
-            Text(
-              'Sample text',
-              style: Theme.of(context).textTheme.button,
-            ),
+            new Container(
+              padding: new EdgeInsets.all(5.0),
+              child: Text(
+                'Aplikacja służy do lokalizacji samochodu na parkingu samochodowym. Wystarczy "Zaparkować Samochód" w aplikacji, by potem łatwo odnaleźć go na mapie.',
+                style: Theme.of(context).textTheme.button,
+              ),
+            )
           ],
         ),
-      ),
+      )),
     );
   }
 }
